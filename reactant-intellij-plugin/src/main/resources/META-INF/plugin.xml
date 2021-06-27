@@ -1,0 +1,29 @@
+<idea-plugin>
+  <id>dev.reactant.reactant-intellij-plugin</id>
+  <name>Reactant Integration</name>
+  <vendor email="zygdtako@outlook.com" url="https://reactant.dev">Reactant Dev.</vendor>
+
+  <description><![CDATA[
+    Reactant integration plugin for intellij
+    ]]></description>
+
+  <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+       on how to target different products -->
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.java</depends>
+  <depends>org.jetbrains.plugins.gradle</depends>
+
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <kotlinDslFrameworkSupport implementation="dev.reactant.intellij.plugin.framework.ReactantKotlinDslGradleFrameworkSupportProvider" />
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <moduleType id="dev.reactant.intellij.plugin.module"
+                implementationClass="dev.reactant.intellij.plugin.module.ReactantPluginModuleType" />
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+</idea-plugin>
