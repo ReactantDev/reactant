@@ -16,6 +16,9 @@ allprojects {
         maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     }
+
+    apply(plugin = "dev.reactant.gradle")
+    useReactantPreconfiguredTesting()
 }
 
 subprojects {
@@ -54,7 +57,7 @@ tasks.jacocoTestReport {
 afterEvaluate {
     tasks.jacocoTestReport.get().dependsOn(
         subprojects.mapNotNull {
-            if (it.pluginManager.hasPlugin("jacoco")) it.tasks.jacocoTestReport else null
+            it.tasks.findByName("jacocoTestReport")
         }
     )
 }

@@ -134,8 +134,11 @@ class ReactantGradlePlugin : Plugin<Project> {
             pluginDependencyNotationNameMap
         )
 
-        val reactantGradleExtension =
-            project.extensions.create("reactantGradle", ReactantGradlePluginExtension::class.java)
+        project.extensions.create(
+            "useReactantPreconfiguredTesting",
+            ReactantPluginPreconfiguredTestingExtension::class.java,
+            project,
+        )
 
         project.extensions.create("getTaggedVersion", ReactantTaggedVersionExtension::class.java, project)
 
@@ -146,35 +149,5 @@ class ReactantGradlePlugin : Plugin<Project> {
         configureKtlint(project)
 
         configureArchives(project)
-
-        project.afterEvaluate {
-            if (reactantGradleExtension.preconfigureJunit.get()) {
-                project.dependencies.apply {
-                    add(
-                        RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME,
-                        "org.jetbrains.kotlin:kotlin-stdlib:${it.getKotlinPluginVersion()}"
-                    )
-
-                    listOf(
-                        platform("org.junit:junit-bom:${reactantGradleExtension.preconfigureJunitVersion.get()}"),
-                        "org.junit.jupiter:junit-jupiter",
-                        "org.mockito:mockito-core:${reactantGradleExtension.preconfigureMockitoVersion.get()}",
-                        "org.mockito:mockito-junit-jupiter:${reactantGradleExtension.preconfigureMockitoVersion.get()}",
-                        "org.mockito:mockito-inline:${reactantGradleExtension.preconfigureMockitoVersion.get()}",
-                    ).forEach { add("testImplementation", it) }
-                }
-
-                (project.tasks.getByName("test") as Test).apply {
-                    useJUnitPlatform()
-                    testLogging {
-                        it.events("passed", "skipped", "failed")
-                    }
-                }
-
-                (project.extensions.getByName("jacoco") as JacocoPluginExtension).apply {
-                    toolVersion = "0.8.7"
-                }
-            }
-        }
     }
 }

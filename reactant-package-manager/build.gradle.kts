@@ -1,7 +1,3 @@
-plugins {
-    id("dev.reactant.gradle") apply true
-}
-
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${System.getProperty("spigotAPIVersion")}")
     shadow("org.apache.maven:maven-resolver-provider:3.6.3")
