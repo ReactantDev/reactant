@@ -1,6 +1,6 @@
 dependencies {
     compileOnly("org.spigotmc:spigot-api:${System.getProperty("spigotAPIVersion")}")
-    shadow(project(":reactant-command"))
+    implementation(project(":reactant-command"))
 }
 
 tasks.generateSpigotPluginConfig {
