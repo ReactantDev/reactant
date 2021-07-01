@@ -12,7 +12,7 @@ abstract class ReactantPluginPreconfiguredTestingExtension(
         junitVersion: String = "5.7.2",
         mockitoVersion: String = "3.11.2",
         jacocoVersion: String = "0.8.7",
-    ){
+    ) {
         project.dependencies.apply {
             add(
                 RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME,
@@ -20,11 +20,11 @@ abstract class ReactantPluginPreconfiguredTestingExtension(
             )
 
             listOf(
-                platform("org.junit:junit-bom:${junitVersion}"),
+                platform("org.junit:junit-bom:$junitVersion"),
                 "org.junit.jupiter:junit-jupiter",
-                "org.mockito:mockito-core:${mockitoVersion}",
-                "org.mockito:mockito-junit-jupiter:${mockitoVersion}",
-                "org.mockito:mockito-inline:${mockitoVersion}",
+                "org.mockito:mockito-core:$mockitoVersion",
+                "org.mockito:mockito-junit-jupiter:$mockitoVersion",
+                "org.mockito:mockito-inline:$mockitoVersion",
             ).forEach { add("testImplementation", it) }
         }
 

@@ -1,7 +1,9 @@
-package dev.reactant.gradle
+package dev.reactant.gradle.tasks
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import dev.reactant.gradle.RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME
+import dev.reactant.gradle.SpigotPluginConfig
 import kotlinx.serialization.encodeToString
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -24,6 +26,7 @@ abstract class ReactantPackageGenerateSpigotPluginConfigTask @Inject constructor
     val spigotPluginConfig: SpigotPluginConfig = SpigotPluginConfig()
 
     init {
+        @Suppress("LeakingThis")
         pluginConfigFile.convention { File("${resourcesPath.get()}/plugin.yml") }
     }
 

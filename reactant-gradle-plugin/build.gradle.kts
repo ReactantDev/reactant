@@ -19,10 +19,11 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
     implementation("com.charleskorn.kaml:kaml:0.34.0")
+    api("io.ktor:ktor-client-core:1.6.0")
+    api("io.ktor:ktor-client-java:1.6.0")
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     api("gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0")
     api("org.jlleitschuh.gradle:ktlint-gradle:10.1.0")
-    api("com.palantir.gradle.gitversion:gradle-git-version:0.12.3")
     api("com.gradle.publish:plugin-publish-plugin:0.15.0")
 }
 

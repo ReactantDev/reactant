@@ -2,15 +2,16 @@ package dev.reactant.gradle
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import dev.reactant.gradle.tasks.ReactantBridgeReloadServerTask
+import dev.reactant.gradle.tasks.ReactantBridgeTransferPluginTask
+import dev.reactant.gradle.tasks.ReactantPackageGenerateInfoTask
+import dev.reactant.gradle.tasks.ReactantPackageGenerateSpigotPluginConfigTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
-import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 internal const val RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME = "resolveRuntimeLibrary"
@@ -24,7 +25,6 @@ class ReactantGradlePlugin : Plugin<Project> {
         project.pluginManager.apply("com.github.johnrengelman.shadow")
         project.pluginManager.apply("org.jlleitschuh.gradle.ktlint")
         project.pluginManager.apply("org.gradle.maven-publish")
-        project.pluginManager.apply("com.palantir.git-version")
 
         val jacocoReport = (project.tasks.getByName("jacocoTestReport") as JacocoReport).apply {
             reports {
@@ -44,6 +44,8 @@ class ReactantGradlePlugin : Plugin<Project> {
         val shadowJar = (project.tasks.getByName("shadowJar") as ShadowJar).apply {
             archiveClassifier.set(null as String?)
             configurations = listOf(
+                project.configurations.getByName("implementation").also { it.isCanBeResolved = true },
+                project.configurations.getByName("api").also { it.isCanBeResolved = true },
                 project.configurations.getByName("shadow")
             )
         }
@@ -74,12 +76,25 @@ class ReactantGradlePlugin : Plugin<Project> {
             it.resourcesPath.set(resourcePath)
         }
 
-        val reactantBridgeTransferPlugin = project.tasks
-            .register("reactantBridgeTransferPlugin")
-            .configure { it.dependsOn(project.tasks.getByName("build")) }
-        project.tasks
-            .register("reactantBridgeReloadServer")
-            .configure { it.dependsOn(reactantBridgeTransferPlugin) }
+        val reactantBridgeTransferPlugin = project.tasks.register(
+            "reactantBridgeTransferPlugin",
+            ReactantBridgeTransferPluginTask::class.java,
+        )
+        reactantBridgeTransferPlugin.configure {
+            it.dependsOn(project.tasks.getByName("build"))
+            val shadowJar = (project.tasks.getByName("shadowJar")) as ShadowJar
+            it.pluginJar.setFrom(shadowJar.outputs)
+        }
+        val reactantBridgeReloadServer = project.tasks.register(
+            "reactantBridgeReloadServer",
+            ReactantBridgeReloadServerTask::class.java
+        )
+        reactantBridgeReloadServer.configure { it.dependsOn(reactantBridgeTransferPlugin) }
+        listOf(reactantBridgeTransferPlugin, reactantBridgeReloadServer).forEach {
+            it.configure {
+                it.group = "ReactantBridge"
+            }
+        }
 
         project.tasks.getByName("processResources").dependsOn(
             reactantPackageGenerateSpigotPluginConfigTask.get(),
@@ -139,8 +154,6 @@ class ReactantGradlePlugin : Plugin<Project> {
             ReactantPluginPreconfiguredTestingExtension::class.java,
             project,
         )
-
-        project.extensions.create("getTaggedVersion", ReactantTaggedVersionExtension::class.java, project)
 
         configureMavenPublishing(project)
 

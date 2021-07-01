@@ -1,5 +1,7 @@
-package dev.reactant.gradle
+package dev.reactant.gradle.tasks
 
+import dev.reactant.gradle.RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME
+import dev.reactant.gradle.RESOLVE_RUNTIME_PLUGIN_CONFIGURATION_NAME
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -12,15 +14,16 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import javax.inject.Inject
 
-@Serializable
-class ReactantPackageInfo(
-    val libraries: List<String>,
-    val plugins: Map<String, String>
-)
-
 abstract class ReactantPackageGenerateInfoTask @Inject constructor(
     private val pluginDependencyNotationNameMap: Map<String, String>
 ) : DefaultTask() {
+
+    @Serializable
+    class ReactantPackageInfo(
+        val libraries: List<String>,
+        val plugins: Map<String, String>
+    )
+
     @get:OutputFile
     abstract val packageInfoFile: RegularFileProperty
 
