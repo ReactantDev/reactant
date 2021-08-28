@@ -6,6 +6,13 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class ReactantExamplePlugin : JavaPlugin() {
     override fun onEnable() {
+        instance = this
         registerReactantCommand(::ReactantExampleCommand)
     }
+
+    companion object {
+        lateinit var instance: ReactantExamplePlugin
+    }
 }
+
+internal val plugin get() = ReactantExamplePlugin.instance

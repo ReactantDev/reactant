@@ -38,6 +38,9 @@ abstract class ReactantPackageGenerateInfoTask @Inject constructor(
 
     @TaskAction
     fun generatePackageInfoResources() {
+        project.configurations.forEach {
+            println("test")
+        }
         val packageInfo = ReactantPackageInfo(
             libraries = project.configurations.getByName(RESOLVE_RUNTIME_LIBRARY_CONFIGURATION_NAME).dependencies
                 .map { "${it.group}:${it.name}:${it.version}" },
